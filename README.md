@@ -30,7 +30,7 @@ $ alain some.proto [> output.rs]
 # dump to output.rs is just bash redirection
 ```
 
-`alain` puts service skeleton code to STDOUT.
+`alain` puts service skeleton code to STDOUT. See [example](./example/).
 
 
 ## Development

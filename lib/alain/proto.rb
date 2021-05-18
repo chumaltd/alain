@@ -51,7 +51,7 @@ module Alain #:nodoc:
     def mod_def(namespace)
       namespace.each do |ns|
         ns.split('.').each { |mod| puts "pub mod #{mod} {" }
-        puts "tonic::include_proto!(\"#{ns}\")"
+        puts "  tonic::include_proto!(\"#{ns}\")"
         ns.split('.').each { |_mod| puts "}" }
         puts
       end
@@ -89,7 +89,7 @@ module Alain #:nodoc:
           when /^\s*service\s+(\S+)\s*{/
             current_svc = $1
             service[current_svc] ||= []
-          when /^\s*rpc\s+(\S+)\((\S+)\)\s+returns\s+\((\S+)\)\s*{/
+          when /^\s*rpc\s+(\S+)\s*\((\S+)\)\s+returns\s+\((\S+)\)\s*{/
             service[current_svc] << {
               method: $1,
               request: $2,
