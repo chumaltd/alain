@@ -1,8 +1,8 @@
 # Alain
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/alain`. To experiment with that code, run `bin/console` for an interactive prompt.
+Simple CLI command, generating [PROST!](https://github.com/danburkert/prost) / [tonic](https://github.com/hyperium/tonic) service skeleton from protobuf.  
+Alain is named after a great F1 driver.
 
-TODO: Delete this and the text above, and describe your gem
 
 ## Installation
 
@@ -20,9 +20,18 @@ Or install it yourself as:
 
     $ gem install alain
 
+
 ## Usage
 
-TODO: Write usage instructions here
+Specify proto file to `alain` command. You may need to prefix `bundle exec` with `bundle install`.
+
+```bash
+$ alain some.proto [> output.rs]
+# dump to output.rs is just bash redirection
+```
+
+`alain` puts service skeleton code to STDOUT.
+
 
 ## Development
 
