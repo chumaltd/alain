@@ -7,19 +7,18 @@ module Alain #:nodoc:
       @package = package
     end
 
-    # TODO: tonic proto macro
     def rust_code
       puts "use tonic::{Request, Response, Status};"
       puts
-      use_def
+      parse_import
       @service.each do |svc, methods|
         puts "pub struct #{svc}Service {}"
         puts
         puts "impl #{svc} for #{svc}Service {"
         methods.each do |method|
-          puts "  async fn #{snake_case(method[:method])}(&self, request: Request<#{method[:request]}>) -> Result<Response<#{method[:response]}>, Status> {"
+          puts "  async fn #{snake_case(method[:method])}(&self, request: Request<#{method[:request].gsub('.', '::')}>) -> Result<Response<#{method[:response].gsub('.', '::')}>, Status> {"
           puts "    let message = request.into_inner();"
-          puts "    Ok(Response::new(#{method[:response]} { }))"
+          puts "    Ok(Response::new(#{method[:response].gsub('.', '::')} { }))"
           puts "  }"
           puts
         end
@@ -27,13 +26,47 @@ module Alain #:nodoc:
       end
     end
 
-    # TODO: uniq duplicated messages
-    def use_def
+    def parse_import
+      package_ns = []
+      other_ns = {}
       @service.each do |svc, methods|
-        puts "use #{namespace}::{"
         methods.each do |method|
-          puts "  #{method[:request]}, #{method[:response]},"
+          [:request, :response].each do |message_type|
+            case method[message_type]
+            when /^(.+)\.(\S+?)$/
+              other_ns[$1] ||= []
+              other_ns[$1] << $2
+            else
+              package_ns << method[message_type]
+            end
+          end
         end
+      end
+      mod_def [@package].concat(other_ns.keys)
+      use_def package_ns, other_ns
+    end
+
+    # Tonic import macro
+    #
+    def mod_def(namespace)
+      namespace.each do |ns|
+        ns.split('.').each { |mod| puts "pub mod #{mod} {" }
+        puts "tonic::include_proto!(\"#{ns}\")"
+        ns.split('.').each { |_mod| puts "}" }
+        puts
+      end
+    end
+
+    # use definition for shorthand
+    #
+    def use_def(package_ns, other_ns)
+      puts "use #{namespace}::{"
+      package_ns.uniq.each { |message| puts "  #{message}," }
+      puts "}"
+      puts
+      other_ns.each do |ns, messages|
+        puts "use #{ns.gsub('.', '::')}::{"
+        messages.uniq.each { |message| puts "  #{message}," }
         puts "}"
         puts
       end
