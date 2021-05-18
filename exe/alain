@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'alain'
+
+class AlainCmd
+  def self.generate(args, params)
+    Alain::Proto.parse(args[0]).rust_code
+  end
+end
+
+#cmd = ARGV.shift
+params = {}
+
+OptionParser.new do |opt|
+  opt.banner = 'Usage: alain [options] proto_file'
+  args = opt.parse!(ARGV)
+  AlainCmd.generate(args, params)
+end
