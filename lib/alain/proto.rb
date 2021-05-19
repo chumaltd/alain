@@ -51,7 +51,7 @@ module Alain #:nodoc:
     def mod_def(namespace)
       namespace.each do |ns|
         ns.split('.').each { |mod| puts "pub mod #{mod} {" }
-        puts "  tonic::include_proto!(\"#{ns}\")"
+        puts "  tonic::include_proto!(\"#{ns}\");"
         ns.split('.').each { |_mod| puts "}" }
         puts
       end
@@ -67,7 +67,7 @@ module Alain #:nodoc:
       other_ns.each do |ns, messages|
         puts "use #{ns.gsub('.', '::')}::{"
         messages.uniq.each { |message| puts "  #{message}," }
-        puts "}"
+        puts "};"
         puts
       end
     end
