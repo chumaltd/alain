@@ -14,7 +14,9 @@ module Alain #:nodoc:
       @service.each do |svc, methods|
         puts "pub struct #{svc}Service {}"
         puts
+        puts '#[tonic::async_trait]'
         puts "impl #{svc} for #{svc}Service {"
+        puts
         methods.each do |method|
           puts "  async fn #{snake_case(method[:method])}(&self, request: Request<#{method[:request].gsub('.', '::')}>) -> Result<Response<#{method[:response].gsub('.', '::')}>, Status> {"
           puts "    let message = request.into_inner();"
@@ -62,7 +64,7 @@ module Alain #:nodoc:
     def use_def(package_ns, other_ns)
       puts "use #{namespace}::{"
       package_ns.uniq.each { |message| puts "  #{message}," }
-      puts "}"
+      puts "};"
       puts
       other_ns.each do |ns, messages|
         puts "use #{ns.gsub('.', '::')}::{"
