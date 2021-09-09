@@ -1,0 +1,23 @@
+PATH
+  remote: .
+  specs:
+    alain (0.1.0)
+      tomlrb (~> 2.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    minitest (5.14.2)
+    rake (13.0.3)
+    tomlrb (2.0.1)
+
+PLATFORMS
+  x86_64-linux
+
+DEPENDENCIES
+  alain!
+  minitest (~> 5.0)
+  rake (~> 13.0)
+
+BUNDLED WITH
+   2.2.25

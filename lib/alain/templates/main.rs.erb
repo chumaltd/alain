@@ -1,0 +1,22 @@
+use once_cell::sync::Lazy;
+use signal_hook::consts::signal::*;
+use signal_hook_tokio::Signals;
+use <%= cargo.crate_name %>::{start_server, handle_signals};
+
+pub static SERVER_BIND: Lazy<std::net::SocketAddr> = Lazy::new(|| {
+    format!("{}:{}", "0.0.0.0", 50051)
+    .parse().unwrap()
+    });
+
+#[tokio::main]
+pub async fn main() {
+    let signals = Signals::new(&[SIGTERM]).unwrap();
+    let handle = signals.handle();
+    let (shutdown_trigger, shutdown_signal) = triggered::trigger();
+
+    let signals_task = tokio::spawn(handle_signals(signals, shutdown_trigger));
+
+    start_server(*SERVER_BIND, shutdown_signal).await.unwrap();
+    handle.close();
+    signals_task.await.unwrap();
+}

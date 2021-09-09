@@ -1,6 +1,6 @@
 # Alain
 
-Simple CLI command, generating [PROST!](https://github.com/danburkert/prost) / [tonic](https://github.com/hyperium/tonic) service skeleton from protobuf.  
+Simple CLI command, generating [PROST!](https://github.com/danburkert/prost) / [tonic](https://github.com/hyperium/tonic) service skeleton & server primitive from protobuf.  
 Alain is named after a great F1 driver.
 
 
@@ -23,14 +23,28 @@ Or install it yourself as:
 
 ## Usage
 
+<u>Before starting, protect code with git. This generator modifies existing code.</u>
+
 Specify proto file to `alain` command. You may need to prefix `bundle exec` with `bundle install`.
 
 ```bash
-$ alain some.proto [> output.rs]
-# dump to output.rs is just bash redirection
-```
+# alain requires git commited rust project
+$ cargo new some-project
+$ cd some-project
+$ git init .
+$ cp somewhere/some.proto .
+$ git commit -am "initial commit"
 
-`alain` puts service skeleton code to STDOUT. See [example](./example/).
+# This command also overwrites main.rs / lib.rs
+$ alain some.proto
+No service definition yet...
+Generate service definition
+Overwrite main.rs
+Overwrite lib.rs
+Overwrite build.rs
+Update Cargo.toml
+Done
+```
 
 
 ## Development

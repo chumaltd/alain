@@ -1,31 +1,125 @@
 # frozen_string_literal: true
+require 'erb'
 
 module Alain #:nodoc:
   class Proto
-    def initialize(service, package)
+    def initialize(service, package, proto_path)
+      @proto_path = proto_path
       @service = service
       @package = package
+      @svc_code = Pathname('src') / "#{service_name(:snake)}_service.rs"
+      @implemented = method_scan
     end
 
-    def rust_code
-      puts "use tonic::{Request, Response, Status};"
-      puts
-      parse_import
-      @service.each do |svc, methods|
-        puts "pub struct #{svc}Service {}"
-        puts
-        puts '#[tonic::async_trait]'
-        puts "impl #{svc} for #{svc}Service {"
-        puts
-        methods.each do |method|
-          puts "  async fn #{snake_case(method[:method])}(&self, request: Request<#{method[:request].gsub('.', '::')}>) -> Result<Response<#{method[:response].gsub('.', '::')}>, Status> {"
-          puts "    let message = request.into_inner();"
-          puts "    Ok(Response::new(#{method[:response].gsub('.', '::')} { }))"
-          puts "  }"
-          puts
+    def update_svc
+      origin = File.read @svc_code
+      diff = method_diff
+      File.open(@svc_code, 'w') do |f|
+        origin.each_line do |line|
+          if m = /^impl #{service_name}/.match(line)
+            f.puts line
+            f.puts diff
+          else
+            f.puts line
+          end
         end
-        puts "}"
       end
+    end
+
+    def method_scan
+      return [] unless svc_code_exist?
+
+      [].tap do |res|
+        File.open @svc_code  do |f|
+          f.each_line do |line|
+            if m = /async fn ([A-Za-z0-9_]+)\s*\(/.match(line)
+              res << m[1]
+            end
+          end
+        end
+      end
+    end
+
+    # returns unimplemented methods
+    #
+    def method_diff
+      [].tap do |res|
+        @service.each do |svc, methods|
+          methods.each do |method|
+            next if @implemented.include? snake_case(method[:method])
+
+            res << ''
+            res << '  ' + grpc_method(method[:method], method[:request], method[:response]).gsub(/^}/, '  }')
+          end
+        end
+      end.join("\n")
+    end
+
+    def svc_methods
+      [].tap do |res|
+        @service.each do |svc, methods|
+          res << "pub struct #{svc}Service {}"
+          res << ''
+          res << '#[tonic::async_trait]'
+          res << "impl #{svc} for #{svc}Service {"
+          res << ''
+          methods.each do |method|
+            res << '  ' + grpc_method(method[:method], method[:request], method[:response]).gsub(/^}/, '  }')
+          end
+          res << "}"
+        end
+      end.join("\n")
+    end
+
+    def grpc_method method, request, response
+      <<~EOS
+        async fn #{snake_case(method)}(&self, request: Request<#{request.gsub('.', '::')}>) -> Result<Response<#{response.gsub('.', '::')}>, Status> {
+            let message = request.into_inner();
+            Ok(Response::new(#{response.gsub('.', '::')} { }))
+        }
+      EOS
+    end
+
+    def compile_protos
+      <<~EOS
+      tonic_build::compile_protos("#{@proto_path}")?;
+      EOS
+    end
+
+    # Tonic import macro
+    #
+    def mod_def
+      _, other_ns = parse_import
+      namespaces = [@package].concat other_ns.keys
+      [].tap do |res|
+        namespaces.each do |namespace|
+          ns = namespace.split('.')
+          res << ns.map.with_index do |n, i|
+            '  ' * i + "pub mod #{n} {"
+          end
+          res << '  ' * ns.length + %%tonic::include_proto!("#{@package}");%
+          res << ns.map.with_index do |n, i|
+            '  ' * (ns.length - i - 1) + '}'
+          end
+        end
+      end.join("\n")
+    end
+
+    # use definition for shorthand
+    #
+    def use_def
+      package_ns, other_ns = parse_import
+      [].tap do |res|
+        res << "use crate::#{namespace}::{"
+        package_ns.uniq.each { |message| res << "  #{message}," }
+        res << '};'
+        res << ''
+        other_ns.each do |ns, messages|
+          res << "use crate::#{ns.gsub('.', '::')}::{"
+          messages.uniq.each { |message| res << "  #{message}," }
+          res << '};'
+        end
+      end.join("\n")
     end
 
     def parse_import
@@ -44,34 +138,7 @@ module Alain #:nodoc:
           end
         end
       end
-      mod_def [@package].concat(other_ns.keys)
-      use_def package_ns, other_ns
-    end
-
-    # Tonic import macro
-    #
-    def mod_def(namespace)
-      namespace.each do |ns|
-        ns.split('.').each { |mod| puts "pub mod #{mod} {" }
-        puts "  tonic::include_proto!(\"#{ns}\");"
-        ns.split('.').each { |_mod| puts "}" }
-        puts
-      end
-    end
-
-    # use definition for shorthand
-    #
-    def use_def(package_ns, other_ns)
-      puts "use #{namespace}::{"
-      package_ns.uniq.each { |message| puts "  #{message}," }
-      puts "};"
-      puts
-      other_ns.each do |ns, messages|
-        puts "use #{ns.gsub('.', '::')}::{"
-        messages.uniq.each { |message| puts "  #{message}," }
-        puts "};"
-        puts
-      end
+      [package_ns, other_ns]
     end
 
     def snake_case(str)
@@ -100,11 +167,28 @@ module Alain #:nodoc:
           end
         end
       end
-      new(service, package)
+      new(service, package, proto_path)
     end
 
     def namespace
       @package.gsub('.', '::')
+    end
+
+    def service_name(mode = :camel)
+      case mode
+      when :snake
+        snake_case @service.keys.first
+      else
+        @service.keys.first
+      end
+    end
+
+    def server_mod
+      "#{namespace}::#{service_name :snake}_server::#{service_name}Server"
+    end
+
+    def svc_code_exist?
+      File.exist? @svc_code
     end
   end
 end

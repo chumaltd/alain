@@ -1,11 +1,21 @@
 #!/usr/bin/env ruby
 
 require 'optparse'
+require 'open3'
 require 'alain'
 
 class AlainCmd
   def self.generate(args, params)
-    Alain::Proto.parse(args[0]).rust_code
+    if check_git || params[:force_overwrite]
+      Alain::Driver.new(args[0]).generate(params[:update_server])
+    else
+      puts "This tool requires git repository. If your sure, you can use '--force' option"
+    end
+  end
+
+  def self.check_git
+    _, _, s = Open3.capture3('git status -s')
+    s == 0
   end
 end
 
@@ -14,6 +24,8 @@ params = {}
 
 OptionParser.new do |opt|
   opt.banner = 'Usage: alain [options] proto_file'
+  opt.on('--force', 'force generate files') { |_v| params[:force_overwrite] = true }
+  opt.on('--update-server', 'Overwrite main.rs/lib.rs with reference server') { |_v| params[:update_server] = true }
   args = opt.parse!(ARGV)
   AlainCmd.generate(args, params)
 end
