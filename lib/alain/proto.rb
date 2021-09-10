@@ -5,6 +5,7 @@ module Alain #:nodoc:
   class Proto
     include Util
     attr_reader :package, :service
+    INDENT = ' ' * 4
 
     def initialize(service, package, proto_path)
       unless File.exist? proto_path
@@ -25,7 +26,9 @@ module Alain #:nodoc:
           res << "impl #{svc} for #{svc}Service {"
           res << ''
           methods.each do |method|
-            res << '  ' + grpc_method(method[:method], method[:request], method[:response]).gsub(/^}/, '  }')
+            next if method[:method].nil?
+
+            res << INDENT + grpc_method(method[:method], method[:request], method[:response])
           end
           res << "}"
         end
@@ -47,11 +50,11 @@ module Alain #:nodoc:
         namespaces.each do |namespace|
           ns = namespace.split('.')
           res << ns.map.with_index do |n, i|
-            '  ' * i + "pub mod #{n} {"
+            INDENT * i + "pub mod #{n} {"
           end
-          res << '  ' * ns.length + %%tonic::include_proto!("#{@package}");%
+          res << INDENT * ns.length + %%tonic::include_proto!("#{@package}");%
           res << ns.map.with_index do |n, i|
-            '  ' * (ns.length - i - 1) + '}'
+            INDENT * (ns.length - i - 1) + '}'
           end
         end
       end.join("\n")
@@ -63,12 +66,12 @@ module Alain #:nodoc:
       package_ns, other_ns = parse_import
       [].tap do |res|
         res << "use crate::#{namespace}::{"
-        package_ns.uniq.each { |message| res << "  #{message}," }
+        package_ns.uniq.each { |message| res << "#{INDENT}#{message}," }
         res << '};'
         res << ''
         other_ns.each do |ns, messages|
           res << "use crate::#{ns.gsub('.', '::')}::{"
-          messages.uniq.each { |message| res << "  #{message}," }
+          messages.uniq.each { |message| res << "#{INDENT}#{message}," }
           res << '};'
         end
       end.join("\n")
@@ -90,6 +93,12 @@ module Alain #:nodoc:
             method: $1,
             request: $2,
             response: $3
+          }
+        when /^\s*message\s+(\S+)\s*{/
+          # Filling nested messages
+          service[current_svc] << {
+            request: $1,
+            method: nil, response: nil
           }
         end
       end
@@ -115,6 +124,8 @@ module Alain #:nodoc:
       @service.each do |svc, methods|
         methods.each do |method|
           [:request, :response].each do |message_type|
+            next if method[message_type].nil?
+
             case method[message_type]
             when /^(.+)\.(\S+?)$/
               other_ns[$1] ||= []
@@ -125,7 +136,7 @@ module Alain #:nodoc:
           end
         end
       end
-      [package_ns, other_ns]
+      [package_ns.uniq, other_ns]
     end
   end
 end

@@ -79,6 +79,7 @@ module Alain #:nodoc:
       [].tap do |res|
         proto.service.each do |svc, methods|
           methods.each do |method|
+            next if method[:method].nil?
             next if @svc_code.methods.include? snake_case(method[:method])
 
             res << ''

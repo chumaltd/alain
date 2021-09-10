@@ -6,7 +6,7 @@ use <%= cargo.crate_name %>::{start_server, handle_signals};
 pub static SERVER_BIND: Lazy<std::net::SocketAddr> = Lazy::new(|| {
     format!("{}:{}", "0.0.0.0", 50051)
     .parse().unwrap()
-    });
+});
 
 #[tokio::main]
 pub async fn main() {

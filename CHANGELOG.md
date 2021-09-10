@@ -1,3 +1,7 @@
+## LucaDeal 0.3.3
+
+* Include messages not used in rpc
+
 ## LucaDeal 0.3.2
 
 * Fixes: fill missing crate / fill missing trait / remove unmatch '}'
