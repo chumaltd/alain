@@ -41,6 +41,12 @@ module Alain #:nodoc:
       end
     end
 
+    def crate_name
+      @cargo.dig('package', 'name').gsub(/-/, '_')
+    end
+
+    private
+
     def dependencies
       {
         'once_cell' => %(once_cell = "1.5"),
@@ -50,7 +56,7 @@ module Alain #:nodoc:
         'signal-hook-tokio' => %(signal-hook-tokio = { version = "0.3.0", features = ["futures-v0_3"] }),
         'tokio' => %(tokio = { version = "1.0", features = ["full"] }),
         'tonic' => %(tonic = "0.4.0"),
-        'triggerd' => %(triggered = "0.1.1")
+        'triggered' => %(triggered = "0.1.1")
       }
     end
 
@@ -58,10 +64,6 @@ module Alain #:nodoc:
       {
         'tonic-build' => %(tonic-build = { version = "0.4", features = ["prost"] }),
       }
-    end
-
-    def crate_name
-      @cargo.dig('package', 'name').gsub(/-/, '_')
     end
   end
 end
