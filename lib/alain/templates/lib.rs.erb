@@ -15,27 +15,26 @@ use self::<%= proto.service_name :snake %>_service::<%= proto.service_name %>Ser
 pub async fn start_server(addr: SocketAddr, signal: Listener) -> Result<(), Box<dyn std::error::Error>> {
     println!("ready");
     create_router().await
-    .serve_with_shutdown(addr, signal).await.unwrap();
+        .serve_with_shutdown(addr, signal).await.unwrap();
 
     Ok(())
-    }
+}
 
-    pub async fn create_router() -> Router<<%= proto.service_name %>Server<<%= proto.service_name %>Service>, tonic::transport::server::Unimplemented> {
+pub async fn create_router() -> Router<<%= proto.service_name %>Server<<%= proto.service_name %>Service>, tonic::transport::server::Unimplemented> {
     let server = <%= proto.service_name %>Service{};
     Server::builder()
-    .add_service(<%= proto.service_name %>Server::new(server))
-    }
+        .add_service(<%= proto.service_name %>Server::new(server))
 }
 
 pub async fn handle_signals(signals: Signals, trigger: triggered::Trigger) {
-  let mut signals = signals.fuse();
-  while let Some(signal) = signals.next().await {
-    match signal {
-      SIGTERM => {
-        println!("SIGTERM caught: going to shutdown");
-        trigger.trigger();
-      },
-      _ => unreachable!(),
+    let mut signals = signals.fuse();
+    while let Some(signal) = signals.next().await {
+        match signal {
+            SIGTERM => {
+                println!("SIGTERM caught: going to shutdown");
+                trigger.trigger();
+            },
+            _ => unreachable!(),
+        }
     }
-  }
 }

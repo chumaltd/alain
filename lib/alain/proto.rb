@@ -110,7 +110,7 @@ module Alain #:nodoc:
     end
 
     def parse_import
-      package_ns = []
+      package_ns = ["#{service_name(:snake)}_server::#{service_name}"]
       other_ns = {}
       @service.each do |svc, methods|
         methods.each do |method|

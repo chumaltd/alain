@@ -1,3 +1,8 @@
+## LucaDeal 0.3.2
+
+* Fixes: fill missing crate / fill missing trait / remove unmatch '}'
+* Template indentation with leading 4 spaces.
+
 ## LucaDeal 0.3.1
 
 * Requires clean git branch by default for safety.

@@ -55,6 +55,7 @@ module Alain #:nodoc:
         'signal-hook' => %(signal-hook = "0.3.9"),
         'signal-hook-tokio' => %(signal-hook-tokio = { version = "0.3.0", features = ["futures-v0_3"] }),
         'tokio' => %(tokio = { version = "1.0", features = ["full"] }),
+        'tokio-stream' => %(tokio-stream = "0.1.2"),
         'tonic' => %(tonic = "0.4.0"),
         'triggered' => %(triggered = "0.1.1")
       }
