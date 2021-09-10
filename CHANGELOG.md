@@ -1,3 +1,8 @@
+## LucaDeal 0.4.0
+
+* Generate integration test and test helper skeleton
+* Add type annotation to request variables in each method.
+
 ## LucaDeal 0.3.3
 
 * Include messages not used in rpc

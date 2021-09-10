@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'erb'
 
 module Alain #:nodoc:
@@ -62,10 +63,10 @@ module Alain #:nodoc:
 
     # use definition for shorthand
     #
-    def use_def
+    def use_def(crate = 'crate')
       package_ns, other_ns = parse_import
       [].tap do |res|
-        res << "use crate::#{namespace}::{"
+        res << "use #{crate}::#{namespace}::{"
         package_ns.uniq.each { |message| res << "#{INDENT}#{message}," }
         res << '};'
         res << ''

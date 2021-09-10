@@ -1,6 +1,6 @@
 # Alain
 
-Simple CLI command, generating [PROST!](https://github.com/danburkert/prost) / [tonic](https://github.com/hyperium/tonic) service skeleton & server primitive from protobuf.  
+Simple CLI command, generating [PROST!](https://github.com/tokio-rs/prost) / [tonic](https://github.com/hyperium/tonic) service skeleton & server primitive from protobuf.  
 Alain is named after a great F1 driver.
 
 
@@ -42,15 +42,19 @@ No service definition yet...
 Generate service definition
 Overwrite main.rs
 Overwrite lib.rs
-Overwrite build.rs
+Generate build.rs
+Generate tests/common/mod.rs
+Generate tests/integration_test.rs
 Update Cargo.toml
 Done
 
 # Resulting files
 $ ls
-Cargo.toml  build.rs  src
+Cargo.toml  build.rs  src  tests
 $ ls src/
 lib.rs  main.rs  some_service.rs
+$ ls tests/
+common  integration_test.rs
 ```
 
 

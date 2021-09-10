@@ -1,0 +1,18 @@
+mod common;
+use common::setup;
+use triggered::trigger;
+
+<%= proto.use_def(cargo.crate_name) %>
+
+#[tokio::test]
+async fn it_returns_ok_response() {
+    let (shutdown_trigger, shutdown_signal) = trigger();
+    let (jh, channel) = setup(shutdown_signal).await.unwrap();
+
+    let mut client = <%= proto.service_name %>Client::new(channel);
+    // TODO: implement gRPC client request
+    assert!(true);
+
+    shutdown_trigger.trigger();
+    jh.await.unwrap();
+}

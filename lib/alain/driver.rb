@@ -1,5 +1,7 @@
 # frozen_string_literal: true
+
 require 'erb'
+require 'fileutils'
 
 module Alain #:nodoc:
   class Driver
@@ -29,8 +31,13 @@ module Alain #:nodoc:
         parse_erb 'main.rs'
         puts 'Overwrite lib.rs'
         parse_erb 'lib.rs'
-        puts 'Overwrite build.rs'
+        puts 'Generate build.rs'
         parse_erb 'build.rs', '', '.'
+        puts 'Generate tests/common/mod.rs'
+        FileUtils.mkdir_p 'tests/common/'
+        parse_erb 'mod.rs', '', 'tests/common'
+        puts 'Generate tests/integration_test.rs'
+        parse_erb 'integration_test.rs', '', 'tests'
         puts 'Update Cargo.toml'
         cargo.add_dependencies
       end

@@ -7,7 +7,7 @@ module Alain #:nodoc:
     def grpc_method method, request, response
       <<~EOS
         async fn #{snake_case(method)}(&self, request: Request<#{namespace(request)}>) -> Result<Response<#{namespace(response)}>, Status> {
-                let message = request.into_inner();
+                let message: #{namespace(request)} = request.into_inner();
                 Ok(Response::new(#{namespace(response)} { }))
             }
       EOS
