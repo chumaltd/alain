@@ -1,3 +1,7 @@
+## LucaDeal 0.3.1
+
+* Requires clean git branch by default for safety.
+
 ## LucaDeal 0.3.0
 
 * diff Messages for update .proto case

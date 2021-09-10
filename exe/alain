@@ -9,13 +9,28 @@ class AlainCmd
     if check_git || params[:force_overwrite]
       Alain::Driver.new(args[0]).generate(params[:update_server])
     else
-      puts "This tool requires git repository. If your sure, you can use '--force' option"
+      exit 1
     end
   end
 
   def self.check_git
-    _, _, s = Open3.capture3('git status -s')
-    s == 0
+    begin
+      _, _, s = Open3.capture3('git status -s')
+    rescue
+    end
+    unless s == 0
+      puts "Requires git repository. If your sure, you can use '--force' option"
+      puts 'Exit'
+      return false
+    end
+
+    o, _, _ = Open3.capture3('git status -s | wc -l')
+    unless o.to_i == 0
+      puts "Commit working diffs before running. If your sure, you can use '--force' option."
+      puts 'Exit'
+      return false
+    end
+    true
   end
 end
 

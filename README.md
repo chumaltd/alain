@@ -23,7 +23,7 @@ Or install it yourself as:
 
 ## Usage
 
-<u>Before starting, protect code with git. This generator modifies existing code.</u>
+<u>Before starting, protect your code with git. This generator modifies existing code, and requires a clean branch.</u>
 
 Specify proto file to `alain` command. You may need to prefix `bundle exec` with `bundle install`.
 
@@ -33,6 +33,7 @@ $ cargo new some-project
 $ cd some-project
 $ git init .
 $ cp somewhere/some.proto .
+# If the working branch has diffs yet commited, alain will abort later.
 $ git commit -am "initial commit"
 
 # This command also overwrites main.rs / lib.rs
@@ -44,6 +45,12 @@ Overwrite lib.rs
 Overwrite build.rs
 Update Cargo.toml
 Done
+
+# Resulting files
+$ ls
+Cargo.toml  build.rs  src
+$ ls src/
+lib.rs  main.rs  some_service.rs
 ```
 
 
