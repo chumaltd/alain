@@ -3,6 +3,7 @@ use common::setup;
 use triggered::trigger;
 
 <%= proto.use_def(cargo.crate_name) %>
+use <%= cargo.crate_name %>::<%= proto.package %>::<%= proto.service_name(:snake) %>_client::<%= proto.service_name %>Client;
 
 #[tokio::test]
 async fn it_returns_ok_response() {

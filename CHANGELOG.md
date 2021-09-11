@@ -1,3 +1,7 @@
+## LucaDeal 0.4.1
+
+* Fix: add fully qualified Client name for integration test case
+
 ## LucaDeal 0.4.0
 
 * Generate integration test and test helper skeleton
