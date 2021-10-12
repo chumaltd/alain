@@ -1,3 +1,7 @@
+## LucaDeal 0.5.0
+
+* Move test shutdown trigger setup into common module
+
 ## LucaDeal 0.4.1
 
 * Fix: add fully qualified Client name for integration test case

@@ -2,9 +2,11 @@
 use std::time::Duration;
 use tokio::task::JoinHandle;
 use tonic::{transport::Channel, Status};
+use triggered::{trigger, Trigger};
 use <%= cargo.crate_name %>::create_router;
 
-pub async fn setup(signal: triggered::Listener) -> Result<(JoinHandle<()>, Channel), Box<dyn std::error::Error>> {
+pub async fn setup() -> Result<(JoinHandle<()>, Channel, Trigger), Box<dyn std::error::Error>> {
+    let (shutdown_trigger, signal) = trigger();
     let srv: JoinHandle<()> = tokio::spawn(async move {
     // Launch gRPC server
     create_router().await
@@ -21,5 +23,5 @@ pub async fn setup(signal: triggered::Listener) -> Result<(JoinHandle<()>, Chann
         .connect_lazy()
         .or_else(|_e| Err(Status::cancelled("client connection error")))?;
 
-    Ok((srv, channel))
+    Ok((srv, channel, shutdown_trigger))
 }

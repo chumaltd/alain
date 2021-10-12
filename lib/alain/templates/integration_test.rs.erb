@@ -1,14 +1,12 @@
 mod common;
 use common::setup;
-use triggered::trigger;
 
 <%= proto.use_def(cargo.crate_name) %>
 use <%= cargo.crate_name %>::<%= proto.package %>::<%= proto.service_name(:snake) %>_client::<%= proto.service_name %>Client;
 
 #[tokio::test]
 async fn it_returns_ok_response() {
-    let (shutdown_trigger, shutdown_signal) = trigger();
-    let (jh, channel) = setup(shutdown_signal).await.unwrap();
+    let (jh, channel, shutdown_trigger) = setup().await.unwrap();
 
     let mut client = <%= proto.service_name %>Client::new(channel);
     // TODO: implement gRPC client request
