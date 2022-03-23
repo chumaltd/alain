@@ -1,3 +1,7 @@
+## LucaDeal 0.6.0
+
+* update tonic version to 0.6
+
 ## LucaDeal 0.5.0
 
 * Move test shutdown trigger setup into common module

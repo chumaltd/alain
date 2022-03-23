@@ -13,17 +13,13 @@ mod <%= proto.service_name :snake %>_service;
 use self::<%= proto.service_name :snake %>_service::<%= proto.service_name %>Service;
 
 pub async fn start_server(addr: SocketAddr, signal: Listener) -> Result<(), Box<dyn std::error::Error>> {
+    let server = <%= proto.service_name %>Service{};
     println!("ready");
-    create_router().await
+    Server::builder()
+        .add_service(<%= proto.service_name %>Server::new(server))
         .serve_with_shutdown(addr, signal).await.unwrap();
 
     Ok(())
-}
-
-pub async fn create_router() -> Router<<%= proto.service_name %>Server<<%= proto.service_name %>Service>, tonic::transport::server::Unimplemented> {
-    let server = <%= proto.service_name %>Service{};
-    Server::builder()
-        .add_service(<%= proto.service_name %>Server::new(server))
 }
 
 pub async fn handle_signals(signals: Signals, trigger: triggered::Trigger) {

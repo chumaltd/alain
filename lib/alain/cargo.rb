@@ -51,20 +51,20 @@ module Alain #:nodoc:
     def dependencies
       {
         'once_cell' => %(once_cell = "1.5"),
-        'prost' => %(prost = "0.7"),
-        'prost-types' => %(prost-types = "0.7"),
+        'prost' => %(prost = "0.9"),
+        'prost-types' => %(prost-types = "0.9"),
         'signal-hook' => %(signal-hook = "0.3.9"),
         'signal-hook-tokio' => %(signal-hook-tokio = { version = "0.3.0", features = ["futures-v0_3"] }),
         'tokio' => %(tokio = { version = "1.0", features = ["full"] }),
         'tokio-stream' => %(tokio-stream = "0.1.2"),
-        'tonic' => %(tonic = "0.4.0"),
-        'triggered' => %(triggered = "0.1.1")
+        'tonic' => %(tonic = "0.6"),
+        'triggered' => %(triggered = "0.1.2")
       }
     end
 
     def build_dependencies
       {
-        'tonic-build' => %(tonic-build = { version = "0.4", features = ["prost"] }),
+        'tonic-build' => %(tonic-build = { version = "0.6", features = ["prost"] }),
       }
     end
   end

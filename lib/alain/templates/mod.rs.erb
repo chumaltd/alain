@@ -3,14 +3,13 @@ use std::time::Duration;
 use tokio::task::JoinHandle;
 use tonic::{transport::Channel, Status};
 use triggered::{trigger, Trigger};
-use <%= cargo.crate_name %>::create_router;
+use <%= cargo.crate_name %>::start_server;
 
 pub async fn setup() -> Result<(JoinHandle<()>, Channel, Trigger), Box<dyn std::error::Error>> {
     let (shutdown_trigger, signal) = trigger();
     let srv: JoinHandle<()> = tokio::spawn(async move {
     // Launch gRPC server
-    create_router().await
-        .serve_with_shutdown("127.0.0.1:50051".parse().unwrap(), signal)
+    start_server("127.0.0.1:50051".parse().unwrap(), signal)
         .await.unwrap()
     });
 
@@ -20,8 +19,7 @@ pub async fn setup() -> Result<(JoinHandle<()>, Channel, Trigger), Box<dyn std::
     let channel = Channel::from_static("http://127.0.0.1:50051")
         .timeout(Duration::from_secs(30))
         .concurrency_limit(20)
-        .connect_lazy()
-        .or_else(|_e| Err(Status::cancelled("client connection error")))?;
+        .connect_lazy();
 
     Ok((srv, channel, shutdown_trigger))
 }
