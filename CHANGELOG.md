@@ -1,3 +1,7 @@
+## Alain 0.7.1
+
+* show listening address on startup
+
 ## Alain 0.7.0
 
 * `--use-server-conf`` option opt-in support for github.com/chumaltd/server-util/
