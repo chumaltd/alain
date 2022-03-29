@@ -8,20 +8,20 @@ module Alain #:nodoc:
     def initialize(dir = '.')
       toml = Pathname(dir) / 'Cargo.toml'
       unless File.exist? toml
-        puts "./Cargo.toml not found. 'cargo new' first."
+        STDERR.puts "./Cargo.toml not found. 'cargo init' first."
         exit 1
       end
       @cargo = Tomlrb.load_file toml
     end
 
-    def add_dependencies
+    def add_dependencies(server_conf: false)
       toml = Pathname('.') / 'Cargo.toml'
       origin = File.read toml
       File.open(toml, 'w') do |f|
         origin.each_line do |line|
           if /^\[dependencies\]/.match(line)
             f.puts line
-            dependencies.each do |k, entry|
+            dependencies(server_conf).each do |k, entry|
               next if @cargo['dependencies'].keys.include? k
               f.puts entry
             end
@@ -48,9 +48,8 @@ module Alain #:nodoc:
 
     private
 
-    def dependencies
+    def dependencies(server_conf)
       {
-        'once_cell' => %(once_cell = "1.5"),
         'prost' => %(prost = "0.9"),
         'prost-types' => %(prost-types = "0.9"),
         'signal-hook' => %(signal-hook = "0.3.9"),
@@ -59,7 +58,13 @@ module Alain #:nodoc:
         'tokio-stream' => %(tokio-stream = "0.1.2"),
         'tonic' => %(tonic = "0.6"),
         'triggered' => %(triggered = "0.1.2")
-      }
+      }.tap do |dep|
+        if server_conf
+          dep['server-conf'] = %(server-conf = { git = "https://github.com/chumaltd/server-util.git" })
+        else
+          dep['once_cell'] = %(once_cell = "1.5")
+        end
+      end
     end
 
     def build_dependencies

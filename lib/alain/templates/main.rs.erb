@@ -1,12 +1,15 @@
-use once_cell::sync::Lazy;
 use signal_hook::consts::signal::*;
 use signal_hook_tokio::Signals;
 use <%= cargo.crate_name %>::{start_server, handle_signals};
-
+<% if @server_conf -%>
+use server_conf::SERVER_BIND;
+<% else -%>
+use once_cell::sync::Lazy;
 pub static SERVER_BIND: Lazy<std::net::SocketAddr> = Lazy::new(|| {
     format!("{}:{}", "0.0.0.0", 50051)
     .parse().unwrap()
 });
+<% end -%>
 
 #[tokio::main]
 pub async fn main() {

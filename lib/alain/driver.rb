@@ -16,32 +16,33 @@ module Alain #:nodoc:
       @svc_code = SvcCode.new proto.service_name(:snake)
     end
 
-    def generate(update_server = false)
+    def generate(update_server = false, server_conf = false)
+      @server_conf = server_conf
       if @svc_code.exist?
-        puts 'Already exists service definition. Only update methods...'
+        STDERR.puts 'Already exists service definition. Only update methods...'
         update_svc
       else
         update_server = true
-        puts 'No service definition yet...'
-        puts 'Generate service definition'
+        STDERR.puts 'No service definition yet...'
+        STDERR.puts 'Generate service definition'
         parse_svc
       end
       if update_server
-        puts 'Overwrite main.rs'
+        STDERR.puts 'Overwrite main.rs'
         parse_erb 'main.rs'
-        puts 'Overwrite lib.rs'
+        STDERR.puts 'Overwrite lib.rs'
         parse_erb 'lib.rs'
-        puts 'Generate build.rs'
+        STDERR.puts 'Generate build.rs'
         parse_erb 'build.rs', '', '.'
-        puts 'Generate tests/common/mod.rs'
+        STDERR.puts 'Generate tests/common/mod.rs'
         FileUtils.mkdir_p 'tests/common/'
         parse_erb 'mod.rs', '', 'tests/common'
-        puts 'Generate tests/integration_test.rs'
+        STDERR.puts 'Generate tests/integration_test.rs'
         parse_erb 'integration_test.rs', '', 'tests'
-        puts 'Update Cargo.toml'
-        cargo.add_dependencies
+        STDERR.puts 'Update Cargo.toml'
+        cargo.add_dependencies(server_conf: @server_conf)
       end
-      puts 'Done'
+      STDERR.puts 'Done'
     end
 
     private

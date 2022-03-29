@@ -10,7 +10,7 @@ module Alain #:nodoc:
 
     def initialize(service, package, proto_path)
       unless File.exist? proto_path
-        puts "#{proto_path} not found. Exit"
+        STDERR.puts "#{proto_path} not found. Exit"
         exit 1
       end
       @path = proto_path

@@ -14,7 +14,7 @@ use self::<%= proto.service_name :snake %>_service::<%= proto.service_name %>Ser
 
 pub async fn start_server(addr: SocketAddr, signal: Listener) -> Result<(), Box<dyn std::error::Error>> {
     let server = <%= proto.service_name %>Service{};
-    println!("ready");
+    println!("{} {} ready", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION"));
     Server::builder()
         .add_service(<%= proto.service_name %>Server::new(server))
         .serve_with_shutdown(addr, signal).await.unwrap();

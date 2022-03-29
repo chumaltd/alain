@@ -7,7 +7,7 @@ require 'alain'
 class AlainCmd
   def self.generate(args, params)
     if check_git || params[:force_overwrite]
-      Alain::Driver.new(args[0]).generate(params[:update_server])
+      Alain::Driver.new(args[0]).generate(params[:update_server], params[:server_conf])
     else
       exit 1
     end
@@ -19,15 +19,15 @@ class AlainCmd
     rescue
     end
     unless s == 0
-      puts "Requires git repository. If your sure, you can use '--force' option"
-      puts 'Exit'
+      STDERR.puts "Requires git repository. If your sure, you can use '--force' option"
+      STDERR.puts 'Exit'
       return false
     end
 
     o, _, _ = Open3.capture3('git status -s | wc -l')
     unless o.to_i == 0
-      puts "Commit working diffs before running. If your sure, you can use '--force' option."
-      puts 'Exit'
+      STDERR.puts "Commit working diffs before running. If your sure, you can use '--force' option."
+      STDERR.puts 'Exit'
       return false
     end
     true
@@ -41,6 +41,7 @@ OptionParser.new do |opt|
   opt.banner = 'Usage: alain [options] proto_file'
   opt.on('--force', 'force generate files') { |_v| params[:force_overwrite] = true }
   opt.on('--update-server', 'Overwrite main.rs/lib.rs with reference server') { |_v| params[:update_server] = true }
+  opt.on('--use-server-conf', 'introduce github.com/chumaltd/server-util') { |_v| params[:server_conf] = true }
   args = opt.parse!(ARGV)
   AlainCmd.generate(args, params)
 end
