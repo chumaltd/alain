@@ -1,3 +1,7 @@
+## Alain 0.7.2
+
+* update to tonic 0.7, prost 0.10
+
 ## Alain 0.7.1
 
 * show listening address on startup
