@@ -69,7 +69,7 @@ module Alain #:nodoc:
 
     def build_dependencies
       {
-        'tonic-build' => %(tonic-build = { version = "0.6", features = ["prost"] }),
+        'tonic-build' => %(tonic-build = { version = "0.7", features = ["prost"] }),
       }
     end
   end
