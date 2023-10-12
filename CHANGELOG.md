@@ -1,3 +1,8 @@
+## Alain 0.7.4
+
+* update to tonic 0.10, prost 0.12, once_cell 1.18
+* Supress git repo error messages on `--force` option
+
 ## Alain 0.7.3
 
 * update tonic-build to 0.7

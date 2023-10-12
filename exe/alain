@@ -6,7 +6,7 @@ require 'alain'
 
 class AlainCmd
   def self.generate(args, params)
-    if check_git || params[:force_overwrite]
+    if params[:force_overwrite] || check_git
       Alain::Driver.new(args[0]).generate(params[:update_server], params[:server_conf])
     else
       exit 1
