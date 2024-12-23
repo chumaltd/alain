@@ -50,13 +50,13 @@ module Alain #:nodoc:
 
     def dependencies(server_conf)
       {
-        'prost' => %(prost = "0.12"),
-        'prost-types' => %(prost-types = "0.12"),
+        'prost' => %(prost = "0.13"),
+        'prost-types' => %(prost-types = "0.13"),
         'signal-hook' => %(signal-hook = "0.3.9"),
         'signal-hook-tokio' => %(signal-hook-tokio = { version = "0.3.0", features = ["futures-v0_3"] }),
         'tokio' => %(tokio = { version = "1.0", features = ["full"] }),
         'tokio-stream' => %(tokio-stream = "0.1.2"),
-        'tonic' => %(tonic = "0.10"),
+        'tonic' => %(tonic = "0.12"),
         'triggered' => %(triggered = "0.1.2")
       }.tap do |dep|
         if server_conf
@@ -69,7 +69,7 @@ module Alain #:nodoc:
 
     def build_dependencies
       {
-        'tonic-build' => %(tonic-build = { version = "0.10", features = ["prost"] }),
+        'tonic-build' => %(tonic-build = { version = "0.12", features = ["prost"] }),
       }
     end
   end

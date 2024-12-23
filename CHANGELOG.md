@@ -1,3 +1,7 @@
+## Alain 0.8.0
+
+* update to tonic 0.12, prost 0.13
+
 ## Alain 0.7.4
 
 * update to tonic 0.10, prost 0.12, once_cell 1.18
