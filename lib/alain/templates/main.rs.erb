@@ -4,8 +4,8 @@ use <%= cargo.crate_name %>::{start_server, handle_signals};
 <% if @server_conf -%>
 use server_conf::SERVER_BIND;
 <% else -%>
-use once_cell::sync::Lazy;
-pub static SERVER_BIND: Lazy<std::net::SocketAddr> = Lazy::new(|| {
+use std::sync::LazyLock;
+pub static SERVER_BIND: LazyLock<std::net::SocketAddr> = LazyLock::new(|| {
     format!("{}:{}", "0.0.0.0", 50051)
     .parse().unwrap()
 });

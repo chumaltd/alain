@@ -61,8 +61,6 @@ module Alain #:nodoc:
       }.tap do |dep|
         if server_conf
           dep['server-conf'] = %(server-conf = { git = "https://github.com/chumaltd/server-util.git" })
-        else
-          dep['once_cell'] = %(once_cell = "1.18")
         end
       end
     end

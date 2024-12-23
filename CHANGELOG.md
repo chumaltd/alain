@@ -1,6 +1,7 @@
 ## Alain 0.8.0
 
 * update to tonic 0.12, prost 0.13
+* remove once_cell in favor of std::sync::LazyLock
 
 ## Alain 0.7.4
 
