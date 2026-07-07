@@ -1,3 +1,7 @@
+## Alain 0.8.1
+
+* bump tonic 0.14, prost 0.14
+
 ## Alain 0.8.0
 
 * update to tonic 0.12, prost 0.13

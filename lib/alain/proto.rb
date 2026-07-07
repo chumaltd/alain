@@ -38,7 +38,7 @@ module Alain #:nodoc:
 
     def compile_protos
       <<~EOS
-      tonic_build::compile_protos("#{@path}")?;
+      tonic_prost_build::compile_protos("#{@path}")?;
       EOS
     end
 
